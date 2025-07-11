@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+
+<!doctype html>
+<html class="no-js" lang="">
+
+@await Component.InvokeAsync("_HeadUserLayoutComponentPartial")
+
+<body>
+    <!-- Start Header Top Area -->
+    @await Component.InvokeAsync("_HeaderUserLayoutComponentPartial")
+    <!-- End Header Top Area -->
+    <!-- Mobile Menu start -->
+    @await Component.InvokeAsync("_MobileMenuUserLayoutComponentPartial")
+    <!-- Mobile Menu end -->
+    <!-- Main Menu area start-->
+    @await Component.InvokeAsync("_NavbarUserLayoutComponentPartial")
+
+    <!-- Main Menu area End-->
+    <!-- Breadcomb area Start-->
+    @await Component.InvokeAsync("_BreadCombUserLayoutComponentPartial")
+    <!-- Breadcomb area End-->
+    <!-- Inbox area Start-->
+    @RenderBody()
+    <!-- Inbox area End-->
+    @await Component.InvokeAsync("_FooterUserLayoutComponentPartial")   
+</body>
+</html>
