@@ -1,4 +1,4 @@
-﻿
+﻿@model UserLoginUserViewModel
 @{
     Layout = null;
 }
@@ -36,13 +36,13 @@
 					<div class="text-danger" asp-validation-summary="ModelOnly"></div>
 					<div class="wrap-input100 validate-input m-b-23">
 						<span class="label-input100">Kullanıcı Adınız</span>
-						<input class="input100" type="text" placeholder="Kullanıcı adınızı giriniz.">
+						<input class="input100" asp-for="Username" type="text" placeholder="Kullanıcı adınızı giriniz.">
 						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input">
 						<span class="label-input100">Şifreniz</span>
-						<input class="input100" type="password" placeholder="Şifrenizi giriniz.">
+						<input class="input100" asp-for="Password" type="password" placeholder="Şifrenizi giriniz.">
 						<span class="focus-input100" data-symbol="&#xf190;"></span>
 					</div>
 
