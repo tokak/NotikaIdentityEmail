@@ -1,8 +1,29 @@
-﻿@model List<Message>
+﻿@model List<MessageWithSenderInfoViewModel>
 @{
     ViewData["Title"] = "Inbox";
     Layout = "~/Views/UserLayout/Index.cshtml";
+
 }
+@{
+    var categoryColorMap = new Dictionary<string, string>();
+    var colorClasses = new[] { "label-primary", "label-success", "label-warning", "label-danger", "label-info", "label-default" };
+    int colorIndex = 0;
+
+    Func<string, string> GetCategoryClass = categoryName =>
+    {
+        if (string.IsNullOrEmpty(categoryName))
+            return "label-default";
+
+        if (!categoryColorMap.ContainsKey(categoryName))
+        {
+            categoryColorMap[categoryName] = colorClasses[colorIndex % colorClasses.Length];
+            colorIndex++;
+        }
+
+        return categoryColorMap[categoryName];
+    };
+}
+
 
 <div class="inbox-area">
     <div class="container">
@@ -13,8 +34,8 @@
                 <div class="inbox-text-list sm-res-mg-t-30">
                     <div class="form-group">
                         <div class="nk-int-st search-input search-overt">
-                            <input type="text" class="form-control" placeholder="Search email..." />
-                            <button class="btn search-ib">Search</button>
+                            <input type="text" class="form-control" placeholder="Aranacak kelimeleri giriniz..." />
+                            <button class="btn search-ib">Ara</button>
                         </div>
                     </div>
                     <div class="inbox-btn-st-ls btn-toolbar">
@@ -33,23 +54,37 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-inbox">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Gönderici</th>
+                                    <th>Konu</th>
+                                    <th>Kategori</th>
+                                    <th>Gönderim Tarihi</th>
+                                </tr>
+                            </thead>
+
                             <tbody>
-                                @foreach(var item in Model)
+                                @foreach (var item in Model)
                                 {
+
                                     <tr>
-                                        <td class="">
-                                            <label><input type="checkbox" class="i-checks"></label>
+                                        <td class=""><label><input type="checkbox" class="i-checks"></label>  </td>
+                                        <th><a href="/Message/MessageDetail/@item.MessageId">@item.SenderName @item.SenderSurname </a> </th>
+                                        <td><a href="/Message/MessageDetail/@item.MessageId">@item.Subject </a> </td>
+                                        <td>
+                                            <span class="label @GetCategoryClass(item.CategoryName)">
+                                                @item.CategoryName
+                                            </span>
                                         </td>
-                                        <td><a href="#">Gönderici:</a> <span class="label label-warning">CategoryId</span></td>
-                                        <td><a href="#"><strong>Konu : </strong> </a></td>
-                                        <td></td>
-                                        <td class="text-right mail-date">tarih</td>
+                                        <td>@item.SendDate.ToString("dd MMMM yyyy")</td>
+
                                     </tr>
                                 }
-                              
+
                             </tbody>
                         </table>
-                       @*  <div class="pagination-inbox">
+                        @*  <div class="pagination-inbox">
                             <ul class="wizard-nav-ac">
                                 <li><a class="btn" href="#"><i class="notika-icon notika-back"></i></a></li>
                                 <li class="active"><a class="btn" href="#">1</a></li>

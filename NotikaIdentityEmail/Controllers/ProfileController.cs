@@ -27,7 +27,7 @@ namespace NotikaIdentityEmail.Controllers
             userEditViewModel.Email = values.Email;
             return View(userEditViewModel);
         }
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> EditProfile(UserEditViewModel model)
         {
             if (model.Password == model.PasswordConfirm)

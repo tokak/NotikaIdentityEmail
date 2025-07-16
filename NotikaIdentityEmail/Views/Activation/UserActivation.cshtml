@@ -31,12 +31,11 @@
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
 				<form class="login100-form validate-form" method="post">
 					<span class="login100-form-title p-b-49">
-						Email Validasyon
+						E-mail Validasyon
 					</span>
-					<h3>@ViewBag.Email</h3>
 					<div class="text-danger" asp-validation-summary="ModelOnly"></div>
 					<div class="wrap-input100 validate-input m-b-23">
-						<span class="label-input100">Kullanıcı Adınız</span>
+						<span class="label-input100">mail: @ViewBag.Email</span>
 						<input class="input100" name="userCodeParameter" type="text" placeholder="Doğrulama kodunu giriniz.">
 						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>

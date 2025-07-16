@@ -25,18 +25,25 @@ namespace NotikaIdentityEmail.Controllers
         [HttpPost]
         public async Task<IActionResult> UserLogin(UserLoginUserViewModel model)
         {
-            var value = _context.Users.Where(x=>x.Email == model.Username).FirstOrDefault();
+            var value = _context.Users.Where(x=>x.UserName == model.Username).FirstOrDefault();
+            if (value == null)
+            {
+                ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifreniz hatalı");
+                return View();
+            }
             if (value.EmailConfirmed)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Profile", "EditProfile");
+                    return RedirectToAction("EditProfile","Profile");
                 }
             }
-          
-            ModelState.AddModelError(string.Empty,"Kullanıcı adı veya şifreniz hatalı");
-            return View();
+            TempData["EmailMove"] = value.Email;
+            return RedirectToAction("UserActivation", "Activation");
+
+
+
         }
     }
 }
