@@ -1,0 +1,236 @@
+﻿@model List<RoleAssignViewModel>
+
+@{
+    ViewData["Title"] = "Kullanıcıya Rol Ata";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+
+
+<style>
+    /* Gradient header */
+    .card-header {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        border-radius: 6px 6px 0 0;
+        padding: 15px 20px;
+        font-weight: 700;
+        font-size: 1.5em;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        user-select: none;
+    }
+
+    /* Card style */
+    .card {
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeIn 0.6s forwards;
+    }
+
+    @@keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Rol list item */
+    .list-group-item {
+        cursor: pointer;
+        position: relative;
+        transition: background-color 0.3s ease;
+        border-left: 6px solid transparent;
+        padding-left: 20px;
+        user-select: none;
+    }
+
+        /* Hover ve aktif renk çizgisi */
+        .list-group-item:hover {
+            background-color: #e6f7ff;
+        }
+
+        .list-group-item.active-role {
+            border-left-color: #00c853;
+            background-color: #e8f5e9;
+        }
+
+    /* Checkbox daha görünür */
+    .form-check-input {
+        margin-top: 0.3em;
+    }
+
+    /* Tümünü seç/kaldır butonu */
+    #toggleAllWrapper {
+        margin-bottom: 15px;
+        text-align: right; /* Sağda hizalama */
+    }
+
+    /* Alt butonların container'ı */
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    /* Kaydet butonu loading */
+    .btn-loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+        .btn-loading .spinner {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 767px) {
+        .card-header {
+            font-size: 1.2em;
+            padding: 10px 15px;
+        }
+    }
+
+    #errorMsg {
+        color: #dc3545; /* Bootstrap kırmızı */
+        margin-bottom: 15px;
+        display: none; /* Başlangıçta gizli */
+        font-weight: 600;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+
+            <div class="card">
+                <div class="card-header">
+                    👥 Kullanıcı - Rol Atama
+                </div>
+
+                <div class="card-body">
+
+                    <form method="post" id="roleAssignForm">
+
+                        <div id="toggleAllWrapper" style="display:none;">
+                            <button type="button" id="toggleAllRoles" class="btn btn-info btn-sm">
+                                Tümünü Seç / Kaldır
+                            </button>
+                        </div>
+                        <span id="errorMsg"></span>
+
+                        <div class="list-group list-group-flush mb-4">
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                <div class="list-group-item @(Model[i].RoleExist ? "active-role" : "")" data-index="@i">
+                                    <input type="hidden" asp-for="@Model[i].RoleId" />
+                                    <input type="hidden" asp-for="@Model[i].RoleName" />
+                                    <input class="form-check-input" type="checkbox" asp-for="@Model[i].RoleExist" id="roleCheck_@i" style="vertical-align: middle;">
+                                    <label class="form-check-label fw-semibold ms-2" for="roleCheck_@i" style="margin-left:10px; cursor:pointer;">
+                                        @Model[i].RoleName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-footer">
+                            <button id="btnBack" class="btn btn-default">
+                                ← Geri Dön
+                            </button>
+
+                            <button type="submit" class="btn btn-success px-4" id="btnSave">
+                                💾 Değişiklikleri Kaydet
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    $(function () {
+        $("#btnBack").click(function (e) {
+            e.preventDefault();
+            history.back();
+        });
+
+        if ($(".list-group-item").length >= 3) {
+            $("#toggleAllWrapper").show();
+        }
+
+        $("#toggleAllRoles").click(function () {
+            var allChecked = $(".form-check-input").length === $(".form-check-input:checked").length;
+            $(".form-check-input").prop("checked", !allChecked).trigger("change");
+        });
+
+        $(".list-group-item").click(function (e) {
+            if (!$(e.target).is("input[type=checkbox]")) {
+                var idx = $(this).data("index");
+                var checkbox = $("#roleCheck_" + idx);
+                checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
+            }
+        });
+
+        $(".form-check-input").change(function () {
+            var parent = $(this).closest(".list-group-item");
+            if ($(this).prop("checked")) {
+                parent.addClass("active-role");
+            } else {
+                parent.removeClass("active-role");
+            }
+        });
+
+        $("#roleAssignForm").submit(function (e) {
+            e.preventDefault();
+            $("#errorMsg").hide();
+
+            var anyChecked = $(".form-check-input:checked").length > 0;
+            if (!anyChecked) {
+                $("#errorMsg").text("Lütfen en az bir rol seçiniz!").show();
+                return false;
+            }
+
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Değişiklikleri kaydetmek istiyor musunuz?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, kaydet',
+                cancelButtonText: 'İptal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var btn = $("#btnSave");
+                    btn.prop("disabled", true).addClass("btn-loading");
+                    btn.html('<span class="spinner"></span> Kaydediliyor...');
+                    e.currentTarget.submit();
+                }
+            });
+        });
+    });
+</script>
+
