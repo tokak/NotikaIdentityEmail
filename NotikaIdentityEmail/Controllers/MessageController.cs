@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NotikaIdentityEmail.Context;
 using NotikaIdentityEmail.Entities;
-using NotikaIdentityEmail.Models;
-using System.Threading.Tasks;
+using NotikaIdentityEmail.Models.MessageViewModels;
 
 namespace NotikaIdentityEmail.Controllers
 {
