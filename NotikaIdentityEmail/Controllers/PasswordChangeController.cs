@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using NotikaIdentityEmail.Entities;
 using NotikaIdentityEmail.Models.ForgetPasswordModel;
-using NotikaIdentityEmail.Views.PasswordChange;
 
 namespace NotikaIdentityEmail.Controllers
 {

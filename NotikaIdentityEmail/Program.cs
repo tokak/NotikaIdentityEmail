@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -12,44 +13,34 @@ builder.Services.AddDbContext<EmailContext>();
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<EmailContext>()
     .AddErrorDescriber<CustomIdentityValidator>().AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
+// JWT Ayarlarý
 builder.Services.Configure<JwtSettingsModel>(builder.Configuration.GetSection("JwtSettingsKey"));
 
-// Uygulamanýn servislerine JWT tabanlý kimlik doðrulama (authentication) ekleniyor.
+// Cookie + JWT birlikte authentication
 builder.Services.AddAuthentication(options =>
 {
-    // Varsayýlan kimlik doðrulama þemasý olarak JWT Bearer belirleniyor.
-    // Yani API istekleri "Authorization: Bearer <token>" baþlýðýyla gönderildiðinde bu sistem devreye girer.
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-
-    // Kimlik doðrulama baþarýsýz olursa da JWT Bearer þemasý kullanýlacak (örneðin 401 Unauthorized dönüþü).
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-// JWT Bearer kimlik doðrulama sistemi yapýlandýrýlýyor.
-.AddJwtBearer(opt =>
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
-    // JWT ayarlarý (anahtar, süre vb.) appsettings.json içindeki "JwtSettingsKey" baþlýðý altýndan okunur.
-    // Bu satýr, JWT ile ilgili yapýlandýrma ayarlarýný bir modele (JwtSettingsModel) bind eder.
+    options.LoginPath = "/Login/UserLogin";
+    options.AccessDeniedPath = "/Error/403";
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
+{
     var jwtSettings = builder.Configuration.GetSection("JwtSettingsKey").Get<JwtSettingsModel>();
     opt.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true, // Issuer kontrolü yapýlacak mý?
-        ValidIssuer = jwtSettings.Issuer, // Geçerli issuer deðeri
-
-        ValidateAudience = true, // Audience kontrolü yapýlacak mý?
-        ValidAudience = jwtSettings.Audience, // Geçerli audience deðeri
-
-        ValidateLifetime = true, // Token süresi kontrol edilsin mi?
-        ValidateIssuerSigningKey = true, // Token imzasý kontrol edilsin mi?
-
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)), // Anahtar
-        ClockSkew = TimeSpan.Zero // Süre sapmasý (isteðe baðlý)
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
     };
-
-   
 });
-
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

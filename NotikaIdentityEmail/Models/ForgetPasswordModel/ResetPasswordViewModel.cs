@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NotikaIdentityEmail.Views.PasswordChange
+namespace NotikaIdentityEmail.Models.ForgetPasswordModel
 {
     public class ResetPasswordViewModel
     {
