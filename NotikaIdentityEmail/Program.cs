@@ -55,6 +55,9 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+app.UseStatusCodePagesWithReExecute("/ErrorPage/HandleError", "?statusCode={0}");
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
