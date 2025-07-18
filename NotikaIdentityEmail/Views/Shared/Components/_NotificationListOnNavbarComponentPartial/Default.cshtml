@@ -1,0 +1,77 @@
+﻿@model List<Notification>
+@{
+    int count = 0;
+}
+
+
+
+<div role="menu" class="dropdown-menu message-dd notification-dd animated zoomIn">
+    <div class="hd-mg-tt">
+        <h2>Bildirimler</h2>
+    </div>
+    <div class="hd-message-info">
+        @foreach (var item in Model)
+        {
+
+            count++;
+            <a href="#" class="openNotificationModal"
+               data-detail="@item.Detail"
+               data-img="@item.ImageUrl"
+               data-count="@count"
+               data-id="@item.Id">
+                <div class="hd-message-sn">
+                    <div class="hd-message-img">
+                        <img src="@item.ImageUrl" alt="" />
+                    </div>
+                    <div class="hd-mg-ctn">
+                        <h3>Bildirim - @count</h3>
+                        <p>@item.Detail</p>
+                    </div>
+                </div>
+            </a>
+        }
+
+
+    </div>
+    <div class="hd-mg-va">
+        <a href="/Notification/NotificationList/">Tümünü Gör</a>
+    </div>
+</div>
+
+
+<!-- Bildirim Detay Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Bildirim Detayı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" style="width:45px;height:45px" alt="Resim" class="img-fluid mb-3" />
+                <p id="modalDetail"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).on('click', '.openNotificationModal', function (e) {
+        e.preventDefault();
+
+        const detail = $(this).data('detail');
+        const img = $(this).data('img');
+        const count = $(this).data('count');
+
+        $('#notificationModalLabel').text("Bildirim - " + count);
+        $('#modalImage').attr('src', img);
+        $('#modalDetail').text(detail);
+
+        $('#notificationModal').modal('show');
+    });
+</script>
+

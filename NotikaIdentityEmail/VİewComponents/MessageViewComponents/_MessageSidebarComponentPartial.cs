@@ -22,7 +22,7 @@ namespace NotikaIdentityEmail.VİewComponents.MessageViewComponents
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             ViewBag.SendMessageCount = _emailContext.Messages.Where(x => x.SenderEmail == user.Email).Count();
-            ViewBag.InboxMessageCount = _emailContext.Messages.Where(x => x.ReceiverEmail == user.Email).Count();
+            ViewBag.InboxMessageCount = _emailContext.Messages.Where(x => x.ReceiverEmail == user.Email && x.IsRead==false).Count();
 
 
             return View();

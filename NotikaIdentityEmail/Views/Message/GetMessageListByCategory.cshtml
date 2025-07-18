@@ -1,34 +1,15 @@
-﻿@using NotikaIdentityEmail.Models.MessageViewModels
-@model List<MessageWithSenderInfoViewModel>
+﻿@model List<MessageWithSenderInfoViewModel>
+
 @{
-    ViewData["Title"] = "Inbox";
+    ViewData["Title"] = "GetMessageListByCategory";
     Layout = "~/Views/UserLayout/Index.cshtml";
-
-}
-@{
-    var categoryColorMap = new Dictionary<string, string>();
-    var colorClasses = new[] { "label-primary", "label-success", "label-warning", "label-danger", "label-info", "label-default" };
-    int colorIndex = 0;
-
-    Func<string, string> GetCategoryClass = categoryName =>
-    {
-        if (string.IsNullOrEmpty(categoryName))
-            return "label-default";
-
-        if (!categoryColorMap.ContainsKey(categoryName))
-        {
-            categoryColorMap[categoryName] = colorClasses[colorIndex % colorClasses.Length];
-            colorIndex++;
-        }
-
-        return categoryColorMap[categoryName];
-    };
 }
 
 
 <div class="inbox-area">
     <div class="container">
         <div class="row">
+
             @await Component.InvokeAsync("_MessageSidebarComponentPartial")
 
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
@@ -55,37 +36,48 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-inbox">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Gönderici</th>
-                                    <th>Konu</th>
-                                    <th>Kategori</th>
-                                    <th>Gönderim Tarihi</th>
-                                </tr>
-                            </thead>
+
+                            <tr>
+                                <th>#</th>
+                                <th>Gönderici</th>
+                                <th>Konu</th>
+                                <th>Kategori</th>
+                                <th>Gönderim Tarihi</th>
+                            </tr>
 
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-
                                     <tr>
-                                        <td class=""><label><input type="checkbox" class="i-checks"></label>  </td>
-                                        <th><a href="/Message/MessageDetail/@item.MessageId">@item.SenderName @item.SenderSurname </a> </th>
-                                        <td><a href="/Message/MessageDetail/@item.MessageId">@item.Subject </a> </td>
-                                        <td>
-                                            <span class="label @GetCategoryClass(item.CategoryName)">
-                                                @item.CategoryName
-                                            </span>
-                                        </td>
-                                        <td>@item.SendDate.ToString("dd MMMM yyyy")</td>
-
+                                        <td class=""><label><input type="checkbox" class="i-checks"></label></td>
+                                        <th><a href="/Message/MessageDetail/@item.MessageId/">@item.SenderName @item.SenderSurname </a> </th>
+                                        <td><a href="/Message/MessageDetail/@item.MessageId/">@item.Subject </a> </td>
+                                        @{
+                                            if (item.CategoryName == "Eğitim")
+                                            {
+                                                <td><span class="label label-warning"> @item.CategoryName </span> </td>
+                                            }
+                                            if (item.CategoryName == "Kampanyalar")
+                                            {
+                                                <td><span class="label label-info"> @item.CategoryName </span> </td>
+                                            }
+                                            if (item.CategoryName == "Sosyal")
+                                            {
+                                                <td><span class="label label-success"> @item.CategoryName </span> </td>
+                                            }
+                                            if (item.CategoryName == "Finans")
+                                            {
+                                                <td><span class="label label-primary"> @item.CategoryName </span> </td>
+                                            }
+                                        }
+                                        <td class="text-right mail-date">@item.SendDate.ToString("dd MMMM yyyy")</td>
                                     </tr>
                                 }
 
+
                             </tbody>
                         </table>
-                       
+
                     </div>
                 </div>
             </div>
